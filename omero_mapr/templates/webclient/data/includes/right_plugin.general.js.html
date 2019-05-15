@@ -69,6 +69,7 @@ var old_linkify_element = OME.linkify_element;
 OME.linkify_element = function(elements) {
     if ($("table.keyValueTable").is(elements) ) {
         var mapr_menu = {% mapr_menu_config %};
+        var mapr_kvsubst = {% mapr_kvsubst_config %};
 
         // Replace namespace with label
         var ns2menu = {};
@@ -132,6 +133,9 @@ OME.linkify_element = function(elements) {
                             $row.hide();
                         }
                     }
+                } else if (_key in mapr_kvsubst) {
+                    var subst = mapr_kvsubst[_key].replace(/\{\{value\}\}/g, _val);
+                    $chvalue.empty().html(subst);
                 } else {
                     old_linkify_element($row);
                 }

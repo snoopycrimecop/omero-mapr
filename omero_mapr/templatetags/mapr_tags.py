@@ -39,3 +39,9 @@ logger = logging.getLogger(__name__)
 @register.simple_tag
 def mapr_menu_config():
     return mark_safe(json.dumps(mapr_settings.CONFIG))
+
+
+@register.simple_tag
+def mapr_kvsubst_config():
+    logger.debug('mapr_settings.KV_SUBSTS %s', mapr_settings.KV_SUBSTS)
+    return mark_safe(json.dumps(mapr_settings.KV_SUBSTS))
