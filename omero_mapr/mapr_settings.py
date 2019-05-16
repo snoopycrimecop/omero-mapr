@@ -23,10 +23,12 @@
 import sys
 import os
 
-import json
 from django.conf import settings
 from omeroweb.settings import process_custom_settings, report_settings
-from omero_mapr.utils import config_list_to_dict
+from omero_mapr.utils import (
+    config_list_to_dict,
+    kvsubst_list_to_dict,
+)
 
 
 # load settings
@@ -34,7 +36,7 @@ MAPR_SETTINGS_MAPPING = {
     "omero.web.mapr.config":
         ["MAPR_CONFIG", "[]", config_list_to_dict, None],
     "omero.web.mapr.metadata_kv_substitutions":
-        ["MAPR_KV_SUBST", "{}", json.loads, None],
+        ["MAPR_KV_SUBST", "[]", kvsubst_list_to_dict, None],
     "omero.web.mapr.favicon":
         ["MAPR_DEFAULT_FAVICON",
          os.path.join(os.path.dirname(__file__),

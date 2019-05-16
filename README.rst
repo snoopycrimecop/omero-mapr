@@ -147,10 +147,14 @@ Value substitutions
 
 Mapr can automatically post-process values based on matching keys.
 This can be useful for cross-referencing public identifiers.
-``omero.web.mapr.metadata_kv_substitutions`` is a map of Map-annotation keys to templated values where all instance of ``{{value}}`` will be replaced with the original value.
-For example, this will convert all values to PubMed URLs where the key is ``PubMed ID`` and the value is the PubMed Identifier::
+``omero.web.mapr.metadata_kv_substitutions`` is a list of dictionaries with the following required fields:
 
-    $ bin/omero config set -- omero.web.mapr.metadata_kv_substitutions '{"PubMed ID": "<a href=\"https://www.ncbi.nlm.nih.gov/pubmed/{{value}}\">{{value}}</a>"}'
+* ``namespace``: Only apply to key-value pairs in this namespace
+* ``key``: The key name to match
+# ``value``: The replacement template value, all instances of ``{{value}}`` will be replaced with the original value.
+For example, this will convert all values in namespace ``idr.openmicroscopy.org/study/info`` to PubMed URLs where the key is ``PubMed ID`` and the value is the PubMed Identifier::
+
+    $ bin/omero config set -- omero.web.mapr.metadata_kv_substitutions '[{"namespace": "idr.openmicroscopy.org/study/info", "key": "PubMed ID", "value": "<a href=\"https://www.ncbi.nlm.nih.gov/pubmed/{{value}}\">{{value}}</a>"}'
 
 
 Testing
