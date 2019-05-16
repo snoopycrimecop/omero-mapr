@@ -152,6 +152,7 @@ This can be useful for cross-referencing public identifiers.
 * ``namespace``: Only apply to key-value pairs in this namespace
 * ``key``: The key name to match
 * ``value``: The replacement template value, all instances of ``{{value}}`` will be replaced with the original value.
+
 For example, this will convert all values in namespace ``idr.openmicroscopy.org/study/info`` to PubMed URLs where the key is ``PubMed ID`` and the value is the PubMed Identifier::
 
     $ bin/omero config set -- omero.web.mapr.metadata_kv_substitutions '[{"namespace": "idr.openmicroscopy.org/study/info", "key": "PubMed ID", "value": "<a href=\"https://www.ncbi.nlm.nih.gov/pubmed/{{value}}\">{{value}}</a>"}]'
