@@ -65,6 +65,18 @@ var isURL = function(input) {
     return urlRegex.test(input);
 };
 
+var mapValueEscapeHtml = function(string) {
+    return String(string).replace(/[&<>"']/g, function (s) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&apos;'
+        }[s];
+    });
+};
+
 var old_linkify_element = OME.linkify_element;
 OME.linkify_element = function(elements) {
     elements.each(function() {
@@ -138,7 +150,7 @@ OME.linkify_element = function(elements) {
                             }
                         }
                     } else if (namespace in mapr_kvsubst && _key in mapr_kvsubst[namespace]) {
-                        var subst = mapr_kvsubst[namespace][_key].replace(/\{\{value\}\}/g, _val);
+                        var subst = mapr_kvsubst[namespace][_key].replace(/\{\{value\}\}/g, mapValueEscapeHtml(_val));
                         $chvalue.empty().html(subst);
                     } else {
                         old_linkify_element($row);
