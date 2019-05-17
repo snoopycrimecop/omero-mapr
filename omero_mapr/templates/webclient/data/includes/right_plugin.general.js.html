@@ -96,10 +96,15 @@ OME.linkify_element = function(elements) {
             var menu2keys = [];
             var keys2menu = {};
             $.each( mapr_menu, function( i, obj ) {
+                // FIXME: This should prevent keys-values in other namespace being linked
+                // but it also breaks the automatic icons for external URLs
+                // https://github.com/ome/omero-mapr/issues/48
+                //if (mapr_menu["ns"] == namespace) {
                 $.merge(menu2keys, obj['all']);
                 $.each( obj['all'], function( j, d ) {
                     keys2menu[d] = i
                 });
+                //}
             });
 
             element.find("tbody").find("tr").each(function() {
