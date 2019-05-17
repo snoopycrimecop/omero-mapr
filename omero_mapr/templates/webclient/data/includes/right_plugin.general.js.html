@@ -114,8 +114,9 @@ OME.linkify_element = function(elements) {
                     var $chvalue = $row.children("td:nth-child(2)");
                     // if label matchs mapr PK
                     var _key = $chlabel.text().trim();
+                    var _val = $chvalue.text().trim();
                     // This returns the HTML escaped value of the text
-                    var _val = $chvalue.html().trim();
+                    var _valEscaped = $chvalue.html().trim();
                     var _tkey = _key.replace(/url/i, "").trim();
                     if ( $.inArray(_tkey, menu2keys) > -1  ) {
                         $chvalue.html(iconify($chvalue.text()));
@@ -123,7 +124,7 @@ OME.linkify_element = function(elements) {
                             if ( _key in keys2menu && keys2menu[_key] !== undefined ) {
                                 // create mapr url
                                 var _url = location.protocol + "//" + location.host + "{% url 'maprindex' %}" + keys2menu[_key] +"/?value=" + encodeURIComponent(_val);
-                                $chvalue.html($chvalue.html().replace(_val, '<a href="' + _url + '">' + _val + '</a>'));
+                                $chvalue.html($chvalue.html().replace(_val, '<a href="' + _url + '">' + _valEscaped + '</a>'));
                             }
                         }
                         if ( _key.match(new RegExp("url", "i"))  ) {
@@ -144,7 +145,7 @@ OME.linkify_element = function(elements) {
                             }
                         }
                     } else if (namespace in mapr_kvsubst && _key in mapr_kvsubst[namespace]) {
-                        var subst = mapr_kvsubst[namespace][_key].replace(/\{\{value\}\}/g, _val);
+                        var subst = mapr_kvsubst[namespace][_key].replace(/\{\{value\}\}/g, _valEscaped);
                         $chvalue.empty().html(subst);
                     } else {
                         old_linkify_element($row);
