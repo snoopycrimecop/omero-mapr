@@ -1,0 +1,6 @@
+# Image created with https://github.com/ome/omero-web-docker/pull/38
+# https://github.com/ome/omero-web-docker/pull/38/commits/46214a6b79e5a892938011763456eb2df8df8e76
+# make VERSION=dev.pr38.3 REPO=manics docker-build
+
+export OMERO_WEB_IMAGE=manics/omero-web-devtest
+export OMERO_WEB_VERSION=dev.pr38.3-0
