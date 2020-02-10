@@ -40,6 +40,9 @@
     }
 </style>
 
+<!-- See https://github.com/nucleome/nb-dispatch -->
+<script src="https://vis.nucleome.org/static/lib/nb-dispatch.min.js">
+</script>
 
 <script type="text/javascript">
 /**
@@ -50,6 +53,42 @@
 
 var urlRegex = new RegExp("(https?|ftp|file):\/\/[!-~]*", "igm");
 
+// Dispatch Nucleosome Browser events. See https://github.com/nucleome/nb-dispatch
+// Uses script nb-dispatch.min.js above
+var nbConnection = nb.dispatch("update","brush");
+nbConnection.connect(function(d){});
+
+var ignoreNB = false;
+var nbDispatch = function(region) {
+    var chr = region.match(/(chr\d+):/)[1];
+    var start = region.match(/:(\d+)-\d+/)[1];
+    var end = region.match(/:\d+-(\d+)/)[1];
+    ignoreNB = true;
+    nbConnection.call("update",this,[{chr:chr, start: parseInt(start), end: parseInt(end)}])
+    ignoreNB = false;
+}
+
+nbConnection.on("update", function(d){
+    if (ignoreNB) {
+        // Ignore events we've dispatched ourselves
+        return;
+    }
+    // TODO: remove console.log() when happy
+    console.log(d);
+    // {chr: "chr2", start: 45300191, end: 45511748, genome: "hg38"}
+    if (!d || d.length == 0) return;
+    var region = d[0];
+    var chr = region.chr.replace('chr', '');
+    // Need to find images within the matching region...
+    var chr_url = "{% url 'mapannotations_api_nb_chromosome' 11 22 33 %}";
+    chr_url = chr_url.replace('11/22/33', chr + '/' + region.start + '/' + region.end);
+    $.getJSON(chr_url, function(data){
+        var query = "show=image-" + (data.data).join("|image-");
+        var webclient_url = WEBCLIENT.URLS.webindex + "?" + query;
+        window.location = webclient_url;
+    })
+});
+
 var iconify = function(input, imgsrc) {
     if (typeof imgsrc === 'undefined') {
         //imgsrc = 'http://www.google.com/s2/favicons?domain=';
@@ -58,7 +97,16 @@ var iconify = function(input, imgsrc) {
     function replacer(match){
         return ' <span class="favicon"><a href="' + match + '" target="_blank" ><img src="' + imgsrc + encodeURIComponent(decodeURIComponent(match)) + '" /></a></span>';
     };
-    return input.replace(urlRegex, replacer);
+    input = input.replace(urlRegex, replacer);
+
+    // If 4DN, we handle click with JavaScript instead of link
+    // e.g. chr19:15200000-15560000
+    var regionRegex = /chr\d+:\d+-\d+/;
+    var rv = input.replace(regionRegex, function(region){
+        var nbIcon = "{% static 'mapr/image/nb.ico' %}";
+        return region + ' <span class="favicon"><a href="#" onclick="nbDispatch(\'' + region + '\');"><img src="' + nbIcon + '" /></a></span>';
+    });
+    return rv;
 };
 
 var isURL = function(input) {
